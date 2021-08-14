@@ -31,19 +31,27 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  const variantStr = {
+    'new-release': 'Just Released!',
+    'on-sale': 'Sale'
+  }
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
+          {variant !== 'default' && <Tag variant={variant}><span>{variantStr[variant]}</span></Tag>}
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price variant={variant}>{formatPrice(price)}</Price>
+          
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {variant === 'on-sale' && <SalePrice>{formatPrice(salePrice)}</SalePrice>}
         </Row>
       </Wrapper>
     </Link>
@@ -55,27 +63,58 @@ const Link = styled.a`
   color: inherit;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 280px;
+  max-width: 320px;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
 `;
 
-const Image = styled.img``;
+const Image = styled.img`
+  width: 100%;
+`;
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  flex: 1;
 `;
 
 const Name = styled.h3`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.gray[900]};
+  flex: 1;
 `;
 
-const Price = styled.span``;
+const Tag = styled.div`
+  position: absolute;
+  border-radius: 2px;
+  background-color: ${({variant}) => {
+    if(variant === 'on-sale') return `${COLORS.primary};`;
+    if(variant === 'new-release') return `${COLORS.secondary};`;
+  }};
+  color: ${COLORS.white};
+  font-weight: ${WEIGHTS.bold};
+  padding: 10px;
+  top: 12px;
+  right: -4px;
+`
+
+const Price = styled.span`
+  align-self: flex-end;
+  ${({variant}) => variant === 'on-sale' && `
+    text-decoration: line-through;
+    color: ${COLORS.gray[500]};
+  `}
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
+  flex: 1;
 `;
 
 const SalePrice = styled.span`
